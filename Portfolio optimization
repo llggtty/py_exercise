@@ -1,0 +1,32 @@
+import numpy as np
+from scipy.optimize import fsolve
+mu = np.array([0.47, 0.33, 0.58])
+mQ = np.array([[1, 0.54, 0.19],[0.54, 1, 0.12],[0.19,0.12,1]])
+ita = np.array([1, 1, 1])
+
+def func(mVector):
+    x = mVector[0:3]
+    dlambda1 = mVector[3]
+    dlambda2 = mVector[4]
+    return mu.dot(x) + dlambda1*(x.dot(mQ.dot(x))) + dlambda2*x.dot(ita)
+
+def dfunc2(mVector):
+    x = mVector[0:3]
+    dlambda1 = mVector[3]
+    dlambda2 = mVector[4]
+    array1 =  mu + 2*dlambda1 * mQ.dot(x) + dlambda2 *ita
+    return np.concatenate((array1,np.array([x.dot(mQ.dot(x))-1,x.dot(ita)])))
+
+mVector = fsolve(dfunc2, [0.4, -1, 0.6, 0.1, 0.1])
+print(mVector, func(mVector))
+
+## analytical
+"""
+Use lagrange multiplier to solve
+
+mu + 2*lambda_1*A*x + lambda_2*ita =0
+xT*Q*x = 1
+xt*ita=0
+=>
+...
+"""
